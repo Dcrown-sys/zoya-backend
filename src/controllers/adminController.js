@@ -3,34 +3,31 @@ const waitlistModel = require("../models/waitlistModel");
 const vendorModel = require("../models/vendorModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail"); // ✅ replace nodemailer
 const adminFirebase = require("../firebaseAdmin"); // Firebase Admin SDK
 
 // ------------------------
-// Nodemailer setup for SendGrid
+// SendGrid setup
 // ------------------------
-const transporter = nodemailer.createTransport({
-  host: "smtp.sendgrid.net",
-  port: 587,
-  secure: false, // TLS, false for 587
-  auth: {
-    user: "apikey", // Must literally be "apikey"
-    pass: process.env.SENDGRID_API_KEY 
-  },
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Helper: send email
 async function sendEmail(to, subject, html) {
   try {
-    await transporter.sendMail({
-      from: `"Zoya" <zoyaprocurementcompany@gmail.com>`, // Change to your verified SendGrid sender
+    const msg = {
       to,
+      from: {
+        email: "zoyaprocurementcompany@gmail.com", // must be verified in SendGrid
+        name: "Zoya",
+      },
       subject,
       html,
-    });
+    };
+
+    await sgMail.send(msg);
     console.log("✅ Email sent to", to);
   } catch (err) {
-    console.error("❌ Email sending error:", err);
+    console.error("❌ Email sending error:", err.response?.body || err.message);
   }
 }
 
