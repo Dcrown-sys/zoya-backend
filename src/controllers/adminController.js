@@ -17,7 +17,7 @@ async function sendEmail(to, subject, html) {
     const msg = {
       to,
       from: {
-        email: "zoyaprocurementcompany@gmail.com", // must be verified in SendGrid
+        email: "noreply@zoyaprocurement.com", // ✅ use your custom domain
         name: "Zoya",
       },
       subject,
@@ -30,6 +30,7 @@ async function sendEmail(to, subject, html) {
     console.error("❌ Email sending error:", err.response?.body || err.message);
   }
 }
+
 
 // Helper: send push notifications via Firebase
 async function sendPushNotification(tokens, title, body) {
